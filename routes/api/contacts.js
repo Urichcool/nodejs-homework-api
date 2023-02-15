@@ -1,4 +1,5 @@
 const express = require("express");
+const Joi = require("joi");
 const {
   listContacts,
   getContactById,
@@ -6,6 +7,24 @@ const {
   removeContact,
   updateContact,
 } = require("../../models/functions");
+
+const schemaPost = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .required(),
+  phone: Joi.string().max(15).required(),
+});
+
+const schemaPut = Joi.object({
+  id: Joi.string(),
+  name: Joi.string(),
+  email: Joi.string().email({
+    minDomainSegments: 2,
+    tlds: { allow: ["com", "net"] },
+  }),
+  phone: Joi.string().max(15),
+});
 
 const router = express.Router();
 
@@ -24,11 +43,13 @@ router.get("/:contactId", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  const { name, email, phone } = req.body;
-  if (name && email && phone) {
-    res.status(201).send(await addContact(req.body));
+  const validatedBody = schemaPost.validate(req.body);
+  const { name, email, phone } = validatedBody.value;
+  const { error } = validatedBody;
+  if (name && email && phone && !error) {
+    res.status(201).send(await addContact(validatedBody.value));
   } else {
-    res.status(400).json({ message: "missing required name field" });
+    res.status(400).json({ message: error.details[0].message });
   }
 });
 
@@ -42,14 +63,28 @@ router.delete("/:contactId", async (req, res, next) => {
 });
 
 router.put("/:contactId", async (req, res, next) => {
-  if (Object.keys(req.body).length === 0) {
-    res.status(400).json({ message: "missing fields" });
+  const validatedBody = schemaPut.validate(req.body);
+  const { error } = validatedBody;
+  if (Object.keys(validatedBody.value).length === 0 || error) {
+    const isValidationError = (error) => {
+      if (error) {
+        return { message: error.details[0].message };
+      } else {
+        return { message: "Missed Fields" };
+      }
+    };
+    res.status(400).json(isValidationError(error));
   } else {
-    const updateFunc = await updateContact(req.params.contactId, req.body);
-    if (updateFunc) {
-      res.status(200).send(updateFunc);
-    } else {
-      res.status(404).json({ message: "Not found" });
+    if (!error) {
+      const updateFunc = await updateContact(
+        req.params.contactId,
+        validatedBody.value
+      );
+      if (updateFunc) {
+        res.status(200).send(updateFunc);
+      } else {
+        res.status(404).json({ message: "Not found" });
+      }
     }
   }
 });
