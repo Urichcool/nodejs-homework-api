@@ -61,18 +61,13 @@ router.delete("/:contactId", async (req, res, next) => {
 router.patch("/:contactId", async (req, res, next) => {
   const validatedBody = schemaPut.validate(req.body);
   const { error } = validatedBody;
-  const isValidationError = (err, body) => {
-    if (Object.keys(body.value).length === 0 || err) {
-      if (error) {
-        return { message: err.details[0].message };
-      }
-      return { message: "Missed Fields" };
-    }
-    return null;
-  };
 
-  if (isValidationError(error, validatedBody)) {
-    return res.status(400).json(isValidationError(error, validatedBody));
+  if (Object.keys(validatedBody.value).length === 0) {
+    return res.status(400).json({ message: "Missed Fields" });
+  }
+
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
   }
 
   const updateFunc = await updateContact(
