@@ -29,9 +29,8 @@ const removeContact = async (contactId) => {
     const filterArr = contactsArr.splice(index, 1);
     await fs.writeFile(filePath, JSON.stringify(contactsArr));
     return filterArr;
-  } else {
-    return null;
   }
+  return null;
 };
 
 const addContact = async (body) => {
@@ -58,9 +57,8 @@ const updateContact = async (contactId, body) => {
     }
     await fs.writeFile(filePath, JSON.stringify(contactsArr));
     return found;
-  } else {
-    return null;
   }
+  return null;
 };
 
 module.exports = {
