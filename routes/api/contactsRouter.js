@@ -1,35 +1,16 @@
 const express = require("express");
-const Joi = require("joi");
 const {
-  listContacts,
+  getContacts,
   getContactById,
   addContact,
   removeContact,
   updateContact,
-} = require("../../models/functions");
-
-const schemaPost = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .required(),
-  phone: Joi.string().max(15).required(),
-});
-
-const schemaPut = Joi.object({
-  id: Joi.string(),
-  name: Joi.string(),
-  email: Joi.string().email({
-    minDomainSegments: 2,
-    tlds: { allow: ["com", "net"] },
-  }),
-  phone: Joi.string().max(15),
-});
+} = require("../../controlers/contactsControler");
 
 const router = express.Router();
 
 router.get("/", async (req, res, next) => {
-  res.status(200).send(await listContacts());
+  res.status(200).send(await getContacts());
 });
 
 router.get("/:contactId", async (req, res, next) => {
