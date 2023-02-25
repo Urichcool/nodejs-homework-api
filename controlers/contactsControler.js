@@ -1,59 +1,42 @@
-const {Contact} = require('../db/contactModel');
+const { Contact } = require("../db/contactModel");
 
-
-const getContacts = async (req, res) => {
-  return await Contact.find({})
+const getContacts = async () => {
+  return await Contact.find({});
 };
 
-
 const getContactById = async (contactId) => {
-  // const contactsArr = await readFile();
-  // const findContact = contactsArr.find(
-  //   ({ id }) => Number(id) === Number(contactId)
-  // );
-  // return findContact;
+  if (contactId.length === 24) {
+    return await Contact.findById(contactId);
+  }
 };
 
 const removeContact = async (contactId) => {
-  // const contactsArr = await readFile();
-  // const index = contactsArr.findIndex(
-  //   ({ id }) => Number(id) === Number(contactId)
-  // );
-  // if (index !== -1) {
-  //   const filterArr = contactsArr.splice(index, 1);
-  //   await fs.writeFile(filePath, JSON.stringify(contactsArr));
-  //   return filterArr;
-  // }
-  // return null;
+  if (contactId.length === 24) {
+    return await Contact.findByIdAndRemove(contactId);
+  }
 };
 
 const addContact = async (body) => {
-  // const contactsArr = await readFile();
-  // const newObj = { id: (contactsArr.length + 1).toString(), ...body };
-  // contactsArr.push(newObj);
-  // await fs.writeFile(filePath, JSON.stringify(contactsArr));
-  // return newObj;
+  const { name, email, phone, favorite = false } = body;
+  const contact = new Contact({ name, email, phone, favorite });
+  await contact.save();
 };
 
 const updateContact = async (contactId, body) => {
-  // const contactsArr = await readFile();
-  // const { name, email, phone } = body;
-  // const found = contactsArr.find(({ id }) => Number(id) === Number(contactId));
-  // if (found) {
-  //   if (name) {
-  //     found.name = name;
-  //   }
-  //   if (email) {
-  //     found.email = email;
-  //   }
-  //   if (phone) {
-  //     found.phone = phone;
-  //   }
-  //   await fs.writeFile(filePath, JSON.stringify(contactsArr));
-  //   return found;
-  // }
-  // return null;
+  if (contactId.length === 24) {
+    const { name, email, phone } = body;
+    return await Contact.findByIdAndUpdate(contactId, { $set: { name, email, phone } });
+  }
 };
+
+const updateStatusContact = async (contactId, body) => {
+  if (contactId.length === 24) {
+    const { favorite } = body;
+    return await Contact.findByIdAndUpdate(contactId, {
+      $set: { favorite },
+    });
+  }
+}
 
 module.exports = {
   getContacts,
@@ -61,4 +44,5 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
+  updateStatusContact
 };
