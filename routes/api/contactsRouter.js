@@ -87,12 +87,13 @@ router.patch("/:contactId", async (req, res, next) => {
 });
 
 router.patch("/:contactId/favorite", async (req, res, next) => {
-  if (Object.keys(req.body) === 0) {
-   return res.status(400).json({ message: "missing field favorite" });
-  }
   const updateFunc = await updateStatusContact(req.params.contactId, req.body)
+  if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({ message: "missing field favorite" });
+  }
+ 
 
-  if (updateFunc && Object.keys(req.body) !== 0) {
+  if (updateFunc) {
     return res.status(200).send(await getContactById(req.params.contactId));
   }
 

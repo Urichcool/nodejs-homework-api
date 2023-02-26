@@ -32,9 +32,11 @@ const updateContact = async (contactId, body) => {
 const updateStatusContact = async (contactId, body) => {
   if (contactId.length === 24) {
     const { favorite } = body;
-    return await Contact.findByIdAndUpdate(contactId, {
-      $set: { favorite },
-    });
+    if (favorite) {
+        return await Contact.findByIdAndUpdate(contactId, {
+          $set: { favorite },
+        });
+    }
   }
 }
 
