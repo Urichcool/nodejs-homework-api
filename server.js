@@ -9,14 +9,18 @@ const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
 const{connectMongo} = require('./db/conection')
 
-const router = require("./routes/api/contactsRouter");
+const contactRouter = require("./routes/api/contactsRouter");
+const authRouter = require('./routes/api/authRouter')
 
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(morgan(formatsLogger));
 
-app.use("/api/contacts", router);
+app.use("/api/contacts", contactRouter);
+app.use("api/users", contactRouter);
+
+
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
