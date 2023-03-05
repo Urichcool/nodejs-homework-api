@@ -18,8 +18,7 @@ app.use(express.json());
 app.use(morgan(formatsLogger));
 
 app.use("/api/contacts", contactRouter);
-app.use("api/users", contactRouter);
-
+app.use("/api/users", authRouter);
 
 
 app.use((req, res) => {

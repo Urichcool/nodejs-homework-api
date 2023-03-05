@@ -8,6 +8,7 @@ const {
   updateContact,
   updateStatusContact
 } = require("../../controlers/contactsControler");
+const {authMiddleware} = require('../../middlewares/authMiddleware')
 
 const schemaPost = Joi.object({
   name: Joi.string().required(),
@@ -29,7 +30,10 @@ const schemaPut = Joi.object({
 
 const router = express.Router();
 
+router.use(authMiddleware)
+
 router.get("/", async (req, res, next) => {
+  console.log(req.user);
   res.status(200).send(await getContacts());
 });
 
