@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const contactController = require('../controllers/contacts')
-const { authorizeUser } = require("../middleware/authorization");
+const { authorizeUser } = require("../middlewares/authorization");
 
 router.get('/', authorizeUser, contactController.getAll)
 router.get('/:contactId', authorizeUser, contactController.getById)

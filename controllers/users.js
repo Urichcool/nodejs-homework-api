@@ -7,7 +7,7 @@ const gravatar = require("gravatar");
 const fs = require("fs/promises");
 const path = require("path");
 const Jimp = require("jimp");
-const { imageStore } = require("../middleware/upload");
+const { imageStore } = require("../middlewares/upload");
 const secret = process.env.JWT_SECRET;
 
 const register = async (req, res, next) => {
@@ -164,9 +164,9 @@ const updateAvatar = async (req, res, next) => {
   }
   const { description } = req.body;
   const { path: temporaryName } = req.file;
-  const fileName = path.join(imageStore, req.file.fileName);
+  const fileName = path.join(imageStore, req.file.filename);
 
-  const newUser = await service.updateUserAvatar(req.body.id, fileName);
+  const newUser = await service.updateUserAvatar(fileName);
   try {
     await fs.rename(temporaryName, fileName);
   } catch (err) {
@@ -185,7 +185,6 @@ const updateAvatar = async (req, res, next) => {
 
   res.json({
     description,
-    fileName,
     avatarURL: newUser.avatarURL,
     message: "File uploaded correctly",
     status: 200,
