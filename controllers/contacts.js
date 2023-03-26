@@ -1,5 +1,5 @@
 const service = require("../service/contacts");
-const { contactValidator } = require("./../utils/validators/validator");
+const { contactValidator } = require("../utils/validator");
 
 const getAll = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
