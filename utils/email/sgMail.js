@@ -12,13 +12,7 @@ const sendVerificationToken = async (mail, token) => {
         html: `<strong>By clicking on the following link, you are confirming your email address <a href=${`http://localhost:3000/api/users/verify/${token}`}>VERIFY</a></strong>`,
     };
     await sgMail
-        .send(msg)
-        .then(() => {
-            console.log('Email sent');
-        })
-        .cath(error => {
-            console.error(error);
-        });
+        .send(msg);
 };
 
 module.exports = {sendVerificationToken}
